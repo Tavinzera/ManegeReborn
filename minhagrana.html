@@ -428,6 +428,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <script>
 // ── ESTADO PADRÃO ──
+
+if(!localStorage.getItem("token")){
+  window.location.href = "login.html";
+}
+  
 const DEFAULT = {
   nome:'',
   renda:6500,
