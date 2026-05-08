@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#1a6fc4,#1a3a5c);
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  width:320px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+h2{
+  text-align:center;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  border:none;
+  background:#1a6fc4;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.switch{
+  margin-top:10px;
+  text-align:center;
+  cursor:pointer;
+  color:#1a6fc4;
+}
+
+.msg{
+  text-align:center;
+  font-size:13px;
+  margin-top:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+  <h2 id="title">Login</h2>
+
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Senha">
+
+<button onclick="submit()">Entrar</button>
+
+  <div class="switch" onclick="toggleMode()">Criar conta</div>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script>
+let isLogin = true;
+
+// 🔁 alterna entre login e cadastro
+function toggleMode(){
+  isLogin = !isLogin;
+
+  document.getElementById("title").innerText = isLogin ? "Login" : "Criar conta";
+  document.querySelector("button").innerText = isLogin ? "Entrar" : "Registrar";
+  document.querySelector(".switch").innerText = isLogin ? "Criar conta" : "Já tenho conta";
+}
+
+// 🚀 enviar dados
+async function submit(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
+
+  const url = isLogin
+    ? "https://SEU-BACKEND.onrender.com/auth/login"
+    : "https://SEU-BACKEND.onrender.com/auth/register";
+
+  try{
+    const res = await fetch(url,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({email,password})
+    });
+
+    const data = await res.json();
+
+    if(isLogin){
+      if(data.token){
+        localStorage.setItem("token", data.token);
+        window.location.href = "index.html";
+      }else{
+        msg.innerText = "Email ou senha inválidos";
+      }
+    }else{
+      msg.innerText = "Conta criada! Faça login.";
+      toggleMode();
+    }
+
+  }catch(e){
+    msg.innerText = "Erro ao conectar com servidor";
+  }
+}
+</script>
+
+</body>
+</html>
