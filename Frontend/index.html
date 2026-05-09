@@ -8,55 +8,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 
-/* Painel Lateral de Configurações */
-.settings-sidebar {
-  position: fixed;
-  top: 0;
-  right: -350px; /* Escondido por padrão */
-  width: 320px;
-  height: 100vh;
-  background: var(--bg-primary);
-  border-left: 1px solid var(--border-md);
-  z-index: 9999;
-  transition: right 0.3s ease;
-  padding: 2rem;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-}
-
-.settings-sidebar.active {
-  right: 0;
-}
-
-.profile-upload {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.profile-img-preview {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--accent);
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.google-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-md);
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
-  margin-top: 20px;
-  font-weight: 500;
-}
-  
 /* Overlay de Login com Blur */
 #loginOverlay {
   position: fixed;
@@ -284,9 +235,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <button class="tab" onclick="switchTab('gastos')"><i class="ti ti-arrow-up" style="font-size:14px"></i>Gastos</button>
     <button class="tab" onclick="switchTab('metas')"><i class="ti ti-target" style="font-size:14px"></i>Metas</button>
     <button class="tab" onclick="switchTab('planejamento')"><i class="ti ti-search" style="font-size:14px"></i>Planejamento</button>
-    <button class="btn-ghost" onclick="toggleSettings()" title="Configurações">
-      <i class="ti ti-settings" style="font-size: 20px;"></i>
-    </button>
+    <button class="tab" onclick="switchTab('config')"><i class="ti ti-settings" style="font-size:14px"></i>Configurações</button>
   </div>
 
   <div class="tab-content">
@@ -537,73 +486,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- TOAST -->
 <div class="toast" id="toast"><i class="ti ti-check" style="font-size:15px"></i><span id="toastMsg">Salvo!</span></div>
 
-<div class="settings-sidebar" id="settingsSidebar">
-  <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 2rem;">
-    <h3>Configurações</h3>
-    <button class="btn-ghost" onclick="toggleSettings()"><i class="ti ti-x"></i></button>
-  </div>
-
-  <div class="profile-upload">
-    <img src="https://via.placeholder.com/100" id="profilePic" class="profile-img-preview" onclick="document.getElementById('fileInput').click()">
-    <input type="file" id="fileInput" hidden accept="image/*" onchange="updatePhoto(this)">
-    <p style="font-size: 12px; color: var(--text-secondary);">Clique para mudar a foto</p>
-  </div>
-
-  <div class="cfg-field">
-    <label class="cfg-label">Seu Nome</label>
-    <input type="text" id="userNameInput" class="cfg-input" placeholder="Ex: João Silva">
-  </div>
-
-  <button class="btn-save" style="width:100%; margin-top:1rem;" onclick="saveProfile()">Salvar Perfil</button>
-
-  <hr style="margin: 2rem 0; border: 0; border-top: 1px solid var(--border);">
-  
-  <p style="font-size: 12px; text-align: center;">Conectar conta</p>
-  <button class="google-btn" onclick="loginWithGoogle()">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" width="18">
-    Entrar com Google
-  </button>
-</div>
-  
 <script>
+// ── ESTADO PADRÃO ──
 
-function toggleSettings() {
-  document.getElementById('settingsSidebar').classList.toggle('active');
-}
 
-// Preview da foto e conversão para Base64 (para salvar no MongoDB)
-function updatePhoto(input) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById('profilePic').src = e.target.result;
-      D.userPhoto = e.target.result; // Salva no seu objeto de dados principal
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
-async function saveProfile() {
-  const newName = document.getElementById('userNameInput').value;
-  if(newName) {
-    D.nome = newName;
-    document.getElementById('headerName').textContent = newName;
-  }
   
-  await save(); // Sua função original que envia para o /data no server.js
-  showToast("Perfil atualizado!");
-  toggleSettings();
-}
-
-// Simulação de Google Login (Front-end)
-function loginWithGoogle() {
-  showToast("Conectando ao Google...");
-  // Para funcionar real, você precisa do Google Identity Services SDK
-  // e configurar o Client ID no Google Cloud Console.
-  alert("Integração Google requer configuração de ClientID no Google Cloud.");
-}
-  
-// ── ESTADO PADRÃO ──  
 const DEFAULT = {
   nome:'',
   renda:6500,
